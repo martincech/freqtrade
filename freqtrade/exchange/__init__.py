@@ -24,3 +24,4 @@ from freqtrade.exchange.huobi import Huobi
 from freqtrade.exchange.kraken import Kraken
 from freqtrade.exchange.kucoin import Kucoin
 from freqtrade.exchange.okx import Okx
+from freqtrade.exchange.xtb import Xtb

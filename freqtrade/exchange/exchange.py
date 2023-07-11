@@ -477,14 +477,15 @@ class Exchange:
                 raise OperationalException(f'Exchange {name} does not provide a sandbox api')
 
     def _load_async_markets(self, reload: bool = False) -> None:
-        try:
-            if self._api_async:
-                self.loop.run_until_complete(
-                    self._api_async.load_markets(reload=reload, params={}))
-
-        except (asyncio.TimeoutError, ccxt.BaseError) as e:
-            logger.warning('Could not load async markets. Reason: %s', e)
-            return
+        pass
+        # try:
+        #     if self._api_async:
+        #         self.loop.run_until_complete(
+        #             self._api_async.load_markets(reload=reload, params={}))
+        # 
+        # except (asyncio.TimeoutError, ccxt.BaseError) as e:
+        #     logger.warning('Could not load async markets. Reason: %s', e)
+        #     return
 
     def _load_markets(self) -> None:
         """ Initialize markets both sync and async """
