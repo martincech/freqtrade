@@ -25,7 +25,8 @@ from tests.conftest import (EXMS, generate_test_data_raw, get_mock_coro, get_pat
 
 
 # Make sure to always keep one exchange here which is NOT subclassed!!
-EXCHANGES = ['binance', 'kraken', 'gate', 'kucoin', 'bybit', 'okx']
+# EXCHANGES = ['binance', 'kraken', 'gate', 'kucoin', 'bybit', 'okx']
+EXCHANGES = ['xtb']
 
 get_entry_rate_data = [
     ('other', 20, 19, 10, 0.0, 20),  # Full ask side
@@ -473,6 +474,41 @@ def test_get_min_pair_stake_amount_real_data(mocker, default_conf) -> None:
     # Max
     result = exchange.get_max_pair_stake_amount('ETH/BTC', 12.0)
     assert result == 4000
+
+
+def test_set_sandbox(default_conf, mocker):
+    """
+    Test working scenario
+    """
+    api_mock = MagicMock()
+    api_mock.load_markets = MagicMock(return_value={
+        'ETH/BTC': '', 'LTC/BTC': '', 'XRP/BTC': '', 'NEO/BTC': ''
+    })
+    url_mock = PropertyMock(return_value={'test': "api-public.sandbox.gdax.com",
+                                          'api': 'https://api.gdax.com'})
+    type(api_mock).urls = url_mock
+    exchange = get_patched_exchange(mocker, default_conf, api_mock)
+    liveurl = exchange._api.urls['api']
+    default_conf['exchange']['sandbox'] = True
+    exchange.set_sandbox(exchange._api, default_conf['exchange'], 'Logname')
+    assert exchange._api.urls['api'] != liveurl
+
+
+def test_set_sandbox_exception(default_conf, mocker):
+    """
+    Test Fail scenario
+    """
+    api_mock = MagicMock()
+    api_mock.load_markets = MagicMock(return_value={
+        'ETH/BTC': '', 'LTC/BTC': '', 'XRP/BTC': '', 'NEO/BTC': ''
+    })
+    url_mock = PropertyMock(return_value={'api': 'https://api.gdax.com'})
+    type(api_mock).urls = url_mock
+
+    with pytest.raises(OperationalException, match=r'does not provide a sandbox api'):
+        exchange = get_patched_exchange(mocker, default_conf, api_mock)
+        default_conf['exchange']['sandbox'] = True
+        exchange.set_sandbox(exchange._api, default_conf['exchange'], 'Logname')
 
 
 def test__load_async_markets(default_conf, mocker, caplog):

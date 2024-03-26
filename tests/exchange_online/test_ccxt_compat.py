@@ -59,7 +59,7 @@ class TestCCXTExchange:
     def test_ccxt_order_parse(self, exchange: EXCHANGE_FIXTURE_TYPE):
         exch, exchange_name = exchange
         if orders := EXCHANGES[exchange_name].get('sample_order'):
-            pair = 'SOL/USDT'
+            pair = 'SOL/USDT' if exchange_name != 'xtb' else "EURUSD"
             for order in orders:
                 market = exch._api.markets[pair]
                 po = exch._api.parse_order(order, market)
