@@ -14,7 +14,7 @@ class Xtb(Exchange):
         "ohlcv_candle_limit": 100,
         "ohlcv_partial_candle": False,
         "ohlcv_require_since": True,
-        "ohlcv_has_history": False,
+        "ohlcv_has_history": True,
         "ccxt_futures_name": "future",
     }
 
